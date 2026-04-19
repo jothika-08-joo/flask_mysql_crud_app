@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, url_for, redirect, Flask
+from flask import request, jsonify, render_template, url_for, redirect, Flask
 import mysql.connector
 
 app = Flask(__name__)
@@ -10,31 +10,25 @@ con=mysql.connector.connect(
     database='mydatabase'
 
 )
-
-@app.route('/get_tables', methods=['GET'])
-def get_tables():
+ 
+@app.route('/add_tasks', methods=['POST'])
+def add_tasks():
+    data=request.get_json()
     cursor=con.cursor()
-    cursor.execute("SHOW TABLES;")
-    tables=[t[0] for t in cursor.fetchall()]
-    cursor.close()
-    return jsonify(tables)    
-
-@app.route('/add_users')
-def add_users():
-    cursor=con.cursor()
-    cursor.execute("INSERT INTO users(id,name) VALUES (1,'JOTHIKA')")
+    cursor.execute("INSERT INTO todo(title, completed) VALUES (%s, %s)",
+    (data['title'], data['completed'])
+    )
     con.commit()
     cursor.close()
     return "user added"
 
-@app.route('/get_users')
-def  get_users():
+@app.route('/get_tasks',  methods=['GET'])
+def get_tasks():
     cursor=con.cursor()
-    cursor.execute(("SELECT * FROM users"))
-    data=cursor.fetchall()
-    con.commit()
+    cursor.execute("select * from todo")
+    tasks=cursor.fetchall()
     cursor.close()
-    return jsonify(data)
+    return jsonify(tasks)
 
 @app.route('/update_users')
 def update_users():
