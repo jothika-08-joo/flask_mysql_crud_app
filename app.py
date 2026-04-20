@@ -30,23 +30,28 @@ def get_tasks():
     cursor.close()
     return jsonify(tasks)
 
-@app.route('/update_users')
-def update_users():
+@app.route('/update_tasks/<int:id>', methods=['PUT'])
+def update_tasks(id):
+    data=request.get_json()
     cursor=con.cursor()
-    cursor.execute("UPDATE users SET name='ARUN' WHERE id=1")
+    cursor.execute(
+        "UPDATE todo SET title=%s, completed=%s where id=%s",
+        (data['title'], data['completed'], id)
+        )
     con.commit()
     cursor.close()
-    return "updated successfully"    
+    return jsonify({"message":"updated successfully"})
 
-@app.route('/delete_users')
-def delete_users():
+@app.route('/delete_tasks/<int:id>', methods=['DELETE'])
+def delete_tasks(id):
     cursor=con.cursor()
-    cursor.execute("DELETE FROM users WHERE id=1")
+    cursor.execute(
+        "DELETE FROM todo WHERE id=%s",
+        (id, )
+    )
     con.commit()
     cursor.close()
-    return "deleted successfully"
-
-
+    return jsonify({"message":"deleted successfully"})
 '''
 @app.route('/')
 def home():
