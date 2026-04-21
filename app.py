@@ -13,14 +13,15 @@ con=mysql.connector.connect(
  
 @app.route('/add_tasks', methods=['POST'])
 def add_tasks():
-    data=request.get_json()
+    title=request.form['title']
+    completed=request.form['completed']
     cursor=con.cursor()
     cursor.execute("INSERT INTO todo(title, completed) VALUES (%s, %s)",
-    (data['title'], data['completed'])
+    (title, completed)
     )
     con.commit()
     cursor.close()
-    return "user added"
+    return redirect('/')
 
 @app.route('/get_tasks',  methods=['GET'])
 def get_tasks():
@@ -52,12 +53,13 @@ def delete_tasks(id):
     con.commit()
     cursor.close()
     return jsonify({"message":"deleted successfully"})
-'''
+
 @app.route('/')
 def home():
-    return render_template("base.html")
-    return redirect(url_for("add_tasks"))
-'''    
+    
+    return render_template("add_tasks.html")
+    
+    
         
 
     
