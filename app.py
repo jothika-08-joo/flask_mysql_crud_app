@@ -10,6 +10,10 @@ con=mysql.connector.connect(
     database='mydatabase'
 
 )
+
+@app.route('/add')
+def add():
+    return render_template('add_tasks.html')
  
 @app.route('/add_tasks', methods=['POST'])
 def add_tasks():
@@ -21,7 +25,7 @@ def add_tasks():
     )
     con.commit()
     cursor.close()
-    return redirect('/')
+    return redirect('/add')
 
 @app.route('/get_tasks',  methods=['GET'])
 def get_tasks():
@@ -29,19 +33,31 @@ def get_tasks():
     cursor.execute("select * from todo")
     tasks=cursor.fetchall()
     cursor.close()
-    return jsonify(tasks)
+    return render_template('view_tasks.html', tasks=tasks)
 
-@app.route('/update_tasks/<int:id>', methods=['PUT'])
+@app.route('/update/<int:id>')
+def update(id):
+    cursor=con.cursor()
+    cursor.execute(
+        "select * from todo where id=%s",
+        (id, )
+    )
+    task=cursor.fetchone()
+    cursor.close()
+    return render_template("update_tasks.html", task=task)
+
+@app.route('/update_tasks/<int:id>', methods=['POST'])
 def update_tasks(id):
-    data=request.get_json()
+    title=request.form['title']
+    completed=request.form['completed']
     cursor=con.cursor()
     cursor.execute(
         "UPDATE todo SET title=%s, completed=%s where id=%s",
-        (data['title'], data['completed'], id)
+        (title, completed, id)
         )
     con.commit()
     cursor.close()
-    return jsonify({"message":"updated successfully"})
+    return redirect('/get_tasks')
 
 @app.route('/delete_tasks/<int:id>', methods=['DELETE'])
 def delete_tasks(id):
@@ -57,7 +73,7 @@ def delete_tasks(id):
 @app.route('/')
 def home():
     
-    return render_template("add_tasks.html")
+    return render_template("base.html")
     
     
         
