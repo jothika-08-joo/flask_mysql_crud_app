@@ -8,11 +8,18 @@
 <body>
     <h1><center>TO-DO-APP</center></h1>
     <h2>add tasks</h2>
-    <form action="/add_tasks" method="POST">
+    <form action="{{url_for('add_tasks')}}" method="POST">
         <input type="text" name="title" placeholder="enter a task">
         <input type="number" name="completed" placeholder="enter 0 for incompleted ,1 for completed" >
         <button type="submit">Add</button>
     </form>
+    {% with messages = get_flashed_messages()%}
+       {% if messages %}
+           {% for message in messages %}
+                 {{message}}
+            {% endfor %}
+        {%endif%}
+    {%endwith%}
     
 </body>
 </html>

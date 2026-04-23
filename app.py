@@ -1,7 +1,9 @@
-from flask import request, jsonify, render_template, url_for, redirect, Flask
+from flask import request, jsonify, render_template, url_for, redirect, Flask, flash
+
 import mysql.connector
 
 app = Flask(__name__)
+app.secret_key = "supersecret"
 
 con=mysql.connector.connect(
     host='localhost',
@@ -19,13 +21,15 @@ def add():
 def add_tasks():
     title=request.form['title']
     completed=request.form['completed']
+    if not title or not completed:
+        return redirect(url_for('add')) , flash("enter a title and completed status")
     cursor=con.cursor()
     cursor.execute("INSERT INTO todo(title, completed) VALUES (%s, %s)",
     (title, completed)
     )
     con.commit()
     cursor.close()
-    return redirect('/add')
+    return redirect('/get_tasks')
 
 @app.route('/get_tasks',  methods=['GET'])
 def get_tasks():
@@ -59,7 +63,7 @@ def update_tasks(id):
     cursor.close()
     return redirect('/get_tasks')
 
-@app.route('/delete_tasks/<int:id>', methods=['DELETE'])
+@app.route('/delete_tasks/<int:id>', methods=['POST', 'GET'])
 def delete_tasks(id):
     cursor=con.cursor()
     cursor.execute(
@@ -68,7 +72,7 @@ def delete_tasks(id):
     )
     con.commit()
     cursor.close()
-    return jsonify({"message":"deleted successfully"})
+    return redirect('/get_tasks')
 
 @app.route('/')
 def home():
