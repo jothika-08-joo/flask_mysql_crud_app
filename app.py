@@ -19,10 +19,11 @@ def add():
  
 @app.route('/add_tasks', methods=['POST'])
 def add_tasks():
-    title=request.form['title']
-    completed=request.form['completed']
-    if not title or not completed:
-        return redirect(url_for('add')) , flash("enter a title and completed status")
+    title=request.form.get('title', '').strip()
+    completed= 1 if request.form.get('completed')=="1" else "0"
+    if not title:
+        flash("enter a title")
+        return redirect(url_for('add'))
     cursor=con.cursor()
     cursor.execute("INSERT INTO todo(title, completed) VALUES (%s, %s)",
     (title, completed)
