@@ -64,7 +64,8 @@ def update_tasks(id):
     cursor.close()
     return redirect('/get_tasks')
 
-@app.route('/delete_tasks/<int:id>', methods=['POST', 'GET'])
+
+@app.route('/delete_tasks/<int:id>', methods=['POST'])
 def delete_tasks(id):
     cursor=con.cursor()
     cursor.execute(
