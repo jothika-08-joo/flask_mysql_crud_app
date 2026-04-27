@@ -20,7 +20,7 @@ def add():
 @app.route('/add_tasks', methods=['POST'])
 def add_tasks():
     title=request.form.get('title', '').strip()
-    completed= 1 if request.form.get('completed')=="1" else "0"
+    completed= "completed" if request.form.get('completed')=="1" else "pending"
     if not title:
         flash("enter a title")
         return redirect(url_for('add'))

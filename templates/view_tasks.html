@@ -16,11 +16,7 @@
         {% for task in tasks%}
             <tr>
                <td>{{task[1]}}</td>
-               <td>{% if task[2]==0%}
-                        {{"pending"}}
-                    {%else%}
-                       {{"completed"}}
-                    {%endif%}       
+               <td>{{task[2]}}
                </td>
                <td>
                 <a href="{{url_for('update', id=task[0])}}">UPDATE</a>
