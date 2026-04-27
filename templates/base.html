@@ -6,17 +6,13 @@
     <title>TO-DO-APP</title>
 </head>
 <body >
-    <form>
-        <div>
-            
-           <a href="{{url_for('add')}} ">add tasks</a><br>
-        </div>
-        <a href="{{url_for('get_tasks')}}">view tasks</a><br>
-       
-
-    </form>
     
+    <nav>
+        <a href="{{url_for('add')}} ">add tasks</a><br>
+        <a href="{{url_for('get_tasks')}}">view tasks</a><br>
+    </nav>
+    
+    {%block content%}{%endblock%}
    
-</body>
 </body>
 </html>

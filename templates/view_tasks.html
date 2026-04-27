@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tasks</title>
-</head>
-<body>
+{%extends "base.html"%}
+{%block content%}
     <table border="1">
         <tr>
             <th>Tasks</th>
@@ -22,19 +16,13 @@
                 <a href="{{url_for('update', id=task[0])}}">UPDATE</a>
                </td>
                <td>
-                <form action="{{url_for('delete_tasks', id=task[0])}}", method='POST'>
+                <form action="{{url_for('delete_tasks', id=task[0])}}" method='POST'>
                     <button type="submit">delete</button>
-
                 </form>
                      
                </td>
                
             </tr>   
         {% endfor%}
-        <a href="{{url_for('add')}}">ADD TASK</a>
-        
-        
-        
     </table>
-</body>
-</html>
+{%endblock%}

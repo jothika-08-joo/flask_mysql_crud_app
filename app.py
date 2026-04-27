@@ -54,7 +54,7 @@ def update(id):
 @app.route('/update_tasks/<int:id>', methods=['POST'])
 def update_tasks(id):
     title=request.form['title']
-    completed=request.form['completed']
+    completed="completed" if request.form.get('completed')=="1" else "pending"
     cursor=con.cursor()
     cursor.execute(
         "UPDATE todo SET title=%s, completed=%s where id=%s",
