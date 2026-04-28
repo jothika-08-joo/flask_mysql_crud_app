@@ -1,5 +1,5 @@
 from flask import request, jsonify, render_template, url_for, redirect, Flask, flash
-
+from werkzeug.security import generate_password_hash
 import mysql.connector
 
 app = Flask(__name__)
@@ -12,6 +12,35 @@ con=mysql.connector.connect(
     database='mydatabase'
 
 )
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    if request.method=='GET':
+        return render_template("signup.html")
+    username=request.form.get('username','').strip()
+    password=request.form.get('password','')
+    if not username or not password:
+        flash("please enter your name and password")
+        return redirect('signup')
+
+    cursor=con.cursor()
+    cursor.execute("select id from users where username=%s",(username, ))
+    existing_user=cursor.fetchone()
+
+    if existing_user:
+        cursor.close()
+        flash("username is already exist")
+        return redirect('signup')
+
+    password_hash=generate_password_hash(password)   
+    cursor=con.cursor()
+    cursor.execute("insert into users (username, password_hash) values(%s, %s)",
+    (username, password_hash)
+    )    
+    con.commit()
+    cursor.close()
+    flash("successfully signup")
+    return redirect("/")
 
 @app.route('/add')
 def add():
