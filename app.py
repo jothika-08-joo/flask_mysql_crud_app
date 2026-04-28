@@ -20,8 +20,8 @@ def signup():
     username=request.form.get('username','').strip()
     password=request.form.get('password','')
     if not username or not password:
-        flash("please enter your name and password")
-        return redirect('signup')
+        flash(" Enter your name and password are required")
+        return redirect(url_for('signup'))
 
     cursor=con.cursor()
     cursor.execute("select id from users where username=%s",(username, ))
@@ -30,7 +30,7 @@ def signup():
     if existing_user:
         cursor.close()
         flash("username is already exist")
-        return redirect('signup')
+        return redirect(url_for('signup'))
 
     password_hash=generate_password_hash(password)   
     cursor=con.cursor()
@@ -40,7 +40,23 @@ def signup():
     con.commit()
     cursor.close()
     flash("successfully signup")
-    return redirect("/")
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method=='GET':
+        return render_template('login.html')    
+    username=request.form.get('username','').strip()
+    password=request.form.get('password','')
+    if not username or not password:
+        flash("ENTER YOUR USERNAME AND PASSWORD")
+        return redirect(url_for('login'))
+    cursor=con.cursor()
+    cursor.execute("select id from users where username=%s, password")    
+
+
+
+
 
 @app.route('/add')
 def add():
