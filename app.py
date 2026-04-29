@@ -1,5 +1,5 @@
 from flask import request, jsonify, render_template, url_for, redirect, Flask, flash
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 
 app = Flask(__name__)
@@ -52,7 +52,35 @@ def login():
         flash("ENTER YOUR USERNAME AND PASSWORD")
         return redirect(url_for('login'))
     cursor=con.cursor()
-    cursor.execute("select id from users where username=%s, password")    
+    cursor.execute("select id from users where username=%s",
+    (username, ))  
+    existing_person=cursor.fetchone()
+    if not existing_person:
+        cursor.close()
+        flash("GO  AND SIGNUP")
+        return redirect(url_for('signup'))
+
+    cursor=con.cursor()
+    cursor.execute("select password_hash from users where username=%s", 
+    (username, ))
+    password_check=cursor.fetchone()
+    for i in password_check:
+        c=i
+    cursor.close()
+
+    v=check_password_hash(c, password)
+    if v:
+        flash("successful login")
+        return redirect(url_for('home'))
+    else:
+        flash("enter a correct password")
+        return redirect(url_for('login'))
+   
+                
+
+
+        
+
 
 
 
