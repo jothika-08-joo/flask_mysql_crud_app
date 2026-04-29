@@ -3,6 +3,7 @@
     PASSWORD:<input type="password" name="password" placeholder="enter your password"><br>
     <button type="submit">submit</button>
 </form>
+IF ALREADY SIGNUP THEN <a href="login">LOGIN</a>
 {% with message = get_flashed_messages()%}
     {% if message%}
         {%for i in message%}

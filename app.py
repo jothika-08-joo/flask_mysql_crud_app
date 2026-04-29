@@ -71,7 +71,7 @@ def login():
     v=check_password_hash(c, password)
     if v:
         flash("successful login")
-        return redirect(url_for('home'))
+        return render_template("base.html")
     else:
         flash("enter a correct password")
         return redirect(url_for('login'))
@@ -152,7 +152,7 @@ def delete_tasks(id):
 @app.route('/')
 def home():
     
-    return render_template("base.html")
+    return redirect(url_for('signup'))
     
     
         
