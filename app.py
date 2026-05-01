@@ -158,7 +158,7 @@ def delete_tasks(id):
     cursor.close()
     return redirect('/get_tasks')
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.clear()
     flash("successfully logged out")
