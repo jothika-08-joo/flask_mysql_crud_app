@@ -89,14 +89,15 @@ def add_tasks():
     if not is_logged_in():
         flash("please login")
         return redirect(url_for('login'))
+    user_id=session['user_id']    
     title=request.form.get('title', '').strip()
     completed= "completed" if request.form.get('completed')=="1" else "pending"
     if not title:
         flash("enter a title")
         return redirect(url_for('add'))
     cursor=con.cursor()
-    cursor.execute("INSERT INTO todo(title, completed) VALUES (%s, %s)",
-    (title, completed)
+    cursor.execute("INSERT INTO todo (title, completed, user_id) VALUES (%s, %s, %s)",
+    (title, completed, user_id)
     )
     con.commit()
     cursor.close()
@@ -107,8 +108,10 @@ def get_tasks():
     if not is_logged_in():
         flash("please login")
         return redirect(url_for('login'))
+    user_id=session['user_id']    
     cursor=con.cursor()
-    cursor.execute("select * from todo")
+    cursor.execute(("select * from todo where user_id =%s"),
+    (user_id, ))
     tasks=cursor.fetchall()
     cursor.close()
     return render_template('view_tasks.html', tasks=tasks)
@@ -118,10 +121,11 @@ def update(id):
     if not is_logged_in():
         flash("please login")
         return redirect(url_for('login'))
+    user_id=session['user_id']    
     cursor=con.cursor()
     cursor.execute(
-        "select * from todo where id=%s",
-        (id, )
+        "select * from todo where user_id=%s AND id=%s",
+        (user_id, id)
     )
     task=cursor.fetchone()
     cursor.close()
@@ -132,12 +136,13 @@ def update_tasks(id):
     if not is_logged_in():
         flash("please login")
         return redirect(url_for('login'))
+    user_id=session['user_id']   
     title=request.form['title']
     completed="completed" if request.form.get('completed')=="1" else "pending"
     cursor=con.cursor()
     cursor.execute(
-        "UPDATE todo SET title=%s, completed=%s where id=%s",
-        (title, completed, id)
+        "UPDATE todo SET title=%s, completed=%s where user_id=%s AND id=%s",
+        (title, completed, user_id, id)
         )
     con.commit()
     cursor.close()
@@ -149,10 +154,11 @@ def delete_tasks(id):
     if not is_logged_in():
         flash("please login")
         return redirect(url_for('login'))
+    user_id=session['user_id']    
     cursor=con.cursor()
     cursor.execute(
-        "DELETE FROM todo WHERE id=%s",
-        (id, )
+        "DELETE FROM todo WHERE user_id=%s AND id=%s",
+        (user_id, id)
     )
     con.commit()
     cursor.close()
