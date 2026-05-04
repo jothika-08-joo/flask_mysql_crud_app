@@ -3,6 +3,7 @@ USERNAME<input type="text" name="username" placeholder="Enter your name"><br>
 PASSWORD<input type="password" name="password" placeholder="Enter your password"><br>
 <button type="submit">LOGIN</button>
 </form>
+if not signup please<a href="signup">signup</a><br>
 {% with messages=get_flashed_messages()%}
     {%if messages%}
         {% for i in messages%}

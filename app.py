@@ -2,6 +2,7 @@ from flask import request, render_template, url_for, redirect, Flask, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import pooling
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "supersecret"
@@ -31,8 +32,14 @@ def close_db(error):
     if db is not None:
         db.close()
 
-def is_logged_in():
-    return 'user_id' in session
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("please login to access this page")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function         
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -98,17 +105,13 @@ def login():
         return redirect(url_for('login'))
    
 @app.route('/add')
+@login_required
 def add():
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     return render_template('add_tasks.html')
  
 @app.route('/add_tasks', methods=['POST'])
+@login_required
 def add_tasks():
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     user_id=session['user_id']    
     title=request.form.get('title', '').strip()
     completed= "completed" if request.form.get('completed')=="1" else "pending"
@@ -125,10 +128,8 @@ def add_tasks():
     return redirect('/get_tasks')
 
 @app.route('/get_tasks',  methods=['GET'])
+@login_required
 def get_tasks():
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     user_id=session['user_id']    
     db = get_db()
     cursor=db.cursor()
@@ -139,10 +140,8 @@ def get_tasks():
     return render_template('view_tasks.html', tasks=tasks)
     
 @app.route('/update/<int:id>')
+@login_required
 def update(id):
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     user_id=session['user_id']
     db = get_db()    
     cursor=db.cursor()
@@ -155,10 +154,8 @@ def update(id):
     return render_template("update_tasks.html", task=task)
 
 @app.route('/update_tasks/<int:id>', methods=['POST'])
+@login_required
 def update_tasks(id):
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     user_id=session['user_id']   
     title=request.form['title']
     completed="completed" if request.form.get('completed')=="1" else "pending"
@@ -174,10 +171,8 @@ def update_tasks(id):
 
 
 @app.route('/delete_tasks/<int:id>', methods=['POST'])
+@login_required
 def delete_tasks(id):
-    if not is_logged_in():
-        flash("please login")
-        return redirect(url_for('login'))
     user_id=session['user_id']    
     db = get_db()
     cursor=db.cursor()
@@ -196,11 +191,9 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/')
+@login_required
 def home():
-    if is_logged_in():
         return redirect(url_for('get_tasks'))
-    
-    return redirect(url_for('signup'))
     
     
         
