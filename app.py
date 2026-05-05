@@ -51,6 +51,12 @@ def signup():
     if not username or not password:
         flash(" Enter your name and password are required")
         return redirect(url_for('signup'))
+    elif len(username)>=100 or len(password)>=10:
+        flash("ENTER THE USERNAME WITHIN 100 CHAR AND PASSWORD 10 CHAR")  
+        return(redirect(url_for('signup')))  
+    elif not username.isalnum():
+        flash("ENTER ONLY CHARACTERS AND NUMBERS AS A USERNAME")  
+        return(redirect(url_for('signup')))  
 
     db = get_db()
     cursor=db.cursor()
