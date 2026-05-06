@@ -124,6 +124,9 @@ def add_tasks():
     if not title:
         flash("enter a title")
         return redirect(url_for('add'))
+    elif len(title)>20:
+        flash("ENTER A TASK WITH IN 20 CHARS")
+        return redirect(url_for('add'))    
     db =  get_db()    
     cursor=db.cursor()
     cursor.execute("INSERT INTO todo (title, completed, user_id) VALUES (%s, %s, %s)",
@@ -164,6 +167,9 @@ def update(id):
 def update_tasks(id):
     user_id=session['user_id']   
     title=request.form['title']
+    if not title:
+        flash("ENTER A TITLE")
+        return redirect(url_for('get_tasks'))
     completed="completed" if request.form.get('completed')=="1" else "pending"
     db = get_db()
     cursor=db.cursor()
