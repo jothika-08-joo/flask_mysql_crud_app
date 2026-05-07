@@ -57,7 +57,6 @@ def signup():
     elif not username.isalnum():
         flash("ENTER ONLY CHARACTERS AND NUMBERS AS A USERNAME")  
         return(redirect(url_for('signup')))  
-
     db = get_db()
     cursor=db.cursor()
     cursor.execute("select id from users where username=%s",(username, ))
@@ -126,14 +125,21 @@ def add_tasks():
         return redirect(url_for('add'))
     elif len(title)>20:
         flash("ENTER A TASK WITH IN 20 CHARS")
-        return redirect(url_for('add'))    
-    db =  get_db()    
-    cursor=db.cursor()
-    cursor.execute("INSERT INTO todo (title, completed, user_id) VALUES (%s, %s, %s)",
-    (title, completed, user_id)
-    )
-    db.commit()
-    cursor.close()
+        return redirect(url_for('add'))   
+    try:     
+        db =  get_db()        
+        cursor=db.cursor()
+        cursor.execute("INSERT INTO todo (title, completed, user_id) VALUES (%s, %s, %s)",
+        (title, completed, user_id)
+        )
+        db.commit()
+    except mysql.connector.Error as err:
+        print(f"ERROR:{err}")
+        flash("database connecting error try again")
+        return redirect(url_for('add'))
+    finally:      
+        if 'cursor'  in locals():
+            cursor.close()
     return redirect('/get_tasks')
 
 @app.route('/get_tasks',  methods=['GET'])
