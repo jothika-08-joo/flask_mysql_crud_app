@@ -140,7 +140,7 @@ def add_tasks():
     finally:      
         if 'cursor'  in locals():
             cursor.close()
-    return redirect('/get_tasks')
+    return redirect('/get_tasks') 
 
 @app.route('/get_tasks',  methods=['GET'])
 @login_required
@@ -158,15 +158,21 @@ def get_tasks():
 @login_required
 def update(id):
     user_id=session['user_id']
-    db = get_db()    
-    cursor=db.cursor()
-    cursor.execute(
+    try:
+        db = get_db()    
+        cursor=db.cursor()
+        cursor.execute(
         "select * from todo where user_id=%s AND id=%s",
         (user_id, id)
-    )
-    task=cursor.fetchone()
-    cursor.close()
-    return render_template("update_tasks.html", task=task)
+        )
+        task=cursor.fetchone()
+    except mysql.connector.Error as err:
+        print(f"ERROR:{err}")
+        flash("database connecting error try again")
+        return redirect(url_for('add'))
+    finally:      
+        cursor.close()
+        return render_template("update_tasks.html", task=task)
 
 @app.route('/update_tasks/<int:id>', methods=['POST'])
 @login_required
