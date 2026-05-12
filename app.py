@@ -3,16 +3,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import pooling
 from functools import wraps
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = "supersecret"
+app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
 
 db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'root',
-    'database': 'mydatabase'
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'user': os.getenv('DB_USER','root'),
+    'password': os.getenv('DB_PASSWORD', 'root'),
+    'database': os.getenv('DB_NAME', 'mydatabase')
+    
 }
 #create a connection pool
 db_pool = pooling.MySQLConnectionPool(
