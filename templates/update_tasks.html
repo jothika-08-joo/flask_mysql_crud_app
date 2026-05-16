@@ -1,9 +1,25 @@
-{%extends "base.html"%}
-{%block content%}
-    <form action="/update_tasks/{{task[0]}}" method="POST">
-        <input type="text" name="title" value="{{task[1]}}" placeholder="enter a update task">
-        <input type="checkbox" name="completed" value="1" {% if task[2] == "completed" %}checked{% endif %}>completed
-        <button type="submit">update</button>
+{% extends "base.html" %}
 
-    </form>
-{%endblock%}    
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-info text-white">
+        <h3 class="mb-0">Update Task</h3>
+    </div>
+    <div class="card-body p-4">
+        <form action="{{ url_for('update_tasks', id=task[0]) }}" method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Task Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ task[1] }}" placeholder="Update your task" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="completed" name="completed" value="1" {% if task[2] == 'completed' %}checked{% endif %}>
+                <label class="form-check-label" for="completed">Mark as completed</label>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('get_tasks') }}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-info text-white">Update Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

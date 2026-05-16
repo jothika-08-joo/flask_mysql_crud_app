@@ -1,31 +1,52 @@
-{%extends "base.html"%}
-{%block content%}
-    <table border="1">
-        <tr>
-            <th>Tasks</th>
-            <th>status</th>
-            <th>action</th>
-        </tr>
-        
-        {% for task in tasks%}
-            <tr>
-               <td>{{task[1]}}</td>
-               <td>{{task[2]}}
-               </td>
-               <td>
-                <a href="{{url_for('update', id=task[0])}}">UPDATE</a>
-               </td>
-               <td>
-                <form action="{{url_for('delete_tasks', id=task[0])}}" method='POST'>
-                    <button type="submit">delete</button>
-                </form>
-                     
-               </td>
-               
-            </tr>   
-        {% endfor%}
-    </table>
-   
+{% extends "base.html" %}
 
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">My Tasks</h2>
+    <a href="{{ url_for('add') }}" class="btn btn-primary">➕ Add New Task</a>
+</div>
 
-{%endblock%}
+<div class="card shadow">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Task Description</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td class="ps-4">
+                        <span class="fw-bold">{{ task[1] }}</span>
+                    </td>
+                    <td>
+                        {% if task[2] == 'completed' %}
+                            <span class="badge bg-success">Completed</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('update', id=task[0]) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form action="{{ url_for('delete_tasks', id=task[0]) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center py-5 text-muted">
+                        <p class="mb-0">No tasks found. Click "Add New Task" to get started!</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
