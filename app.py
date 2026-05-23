@@ -15,15 +15,15 @@ db_config = {
     'host': os.getenv('DB_HOST'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME')
-    
+    'database': os.getenv('DB_NAME'),
+    'port': int(os.getenv('DB_PORT', 3306))
 }
 #create a connection pool
 db_pool = pooling.MySQLConnectionPool(
-    pool_name="mypool",
-    pool_size=5,
-    **db_config
-)
+        pool_name="mypool",
+        pool_size=5,
+        **db_config
+    )
 
 def get_db():
     if 'db' not in g:
