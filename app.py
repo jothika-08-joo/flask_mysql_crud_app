@@ -18,12 +18,18 @@ db_config = {
     'database': os.getenv('DB_NAME'),
     'port': int(os.getenv('DB_PORT', 3306))
 }
-#create a connection pool
-db_pool = pooling.MySQLConnectionPool(
+
+# Create a connection pool
+try:
+    db_pool = pooling.MySQLConnectionPool(
         pool_name="mypool",
         pool_size=5,
         **db_config
     )
+except mysql.connector.Error as err:
+    print(f"Error creating connection pool: {err}")
+    # In a real app, you might want to handle this more gracefully
+    db_pool = None
 
 def get_db():
     if 'db' not in g:
@@ -265,6 +271,39 @@ def home():
 
     
 
+def init_db():
+    """Automatically create tables if they don't exist."""
+    db = mysql.connector.connect(**db_config)
+    cursor = db.cursor()
+    try:
+        # Create Users table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL
+            )
+        """)
+        # Create Todo table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS todo (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(20) NOT NULL,
+                completed VARCHAR(20) DEFAULT 'pending',
+                user_id INT,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        """)
+        db.commit()
+        print("Database initialized successfully!")
+    except mysql.connector.Error as err:
+        print(f"Error initializing database: {err}")
+    finally:
+        cursor.close()
+        db.close()
+
 if __name__=='__main__':
-    print("connecting to db..")
+    print("Initializing database...")
+    init_db()
+    print("Starting Flask app...")
     app.run(host='0.0.0.0', port=5000, debug=True)
