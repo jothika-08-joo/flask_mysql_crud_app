@@ -28,7 +28,6 @@ try:
     )
 except mysql.connector.Error as err:
     print(f"Error creating connection pool: {err}")
-    # In a real app, you might want to handle this more gracefully
     db_pool = None
 
 def get_db():
@@ -272,7 +271,6 @@ def home():
     
 
 def init_db():
-    """Automatically create tables if they don't exist."""
     db = mysql.connector.connect(**db_config)
     cursor = db.cursor()
     try:
@@ -300,6 +298,7 @@ def init_db():
         print(f"Error initializing database: {err}")
     finally:
         cursor.close()
+        db.close()
         db.close()
 
 if __name__=='__main__':
