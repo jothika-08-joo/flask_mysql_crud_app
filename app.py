@@ -271,9 +271,9 @@ def home():
     
 
 def init_db():
-    db = mysql.connector.connect(**db_config)
-    cursor = db.cursor()
     try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor()
         # Create Users table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
@@ -296,13 +296,20 @@ def init_db():
         print("Database initialized successfully!")
     except mysql.connector.Error as err:
         print(f"Error initializing database: {err}")
+        raise err # Re-raise to catch it in __main__
     finally:
-        cursor.close()
-        db.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'db' in locals():
+            db.close()
         db.close()
 
 if __name__=='__main__':
-    print("Initializing database...")
-    init_db()
+    try:
+        print("Initializing database...")
+        init_db()
+    except Exception as e:
+        print(f"Pre-start database check failed: {e}")
+        
     print("Starting Flask app...")
     app.run(host='0.0.0.0', port=5000, debug=True)
