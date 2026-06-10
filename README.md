@@ -190,6 +190,23 @@ This project uses **GitHub Actions** to automate deployment:
 
 ---
 
+## 📸 Screenshots
+
+### Login Page
+![Login Page](https://github.com/jothika-08-joo/flask_mysql_crud_app/blob/c21fc529a456d4b6f24bb5c526bd27d18b757abb/login.png)
+
+### Signup Page
+![Signup Page](https://github.com/jothika-08-joo/flask_mysql_crud_app/blob/c21fc529a456d4b6f24bb5c526bd27d18b757abb/signup.png)
+
+### Add Task
+![Add Task](https://github.com/jothika-08-joo/flask_mysql_crud_app/blob/c21fc529a456d4b6f24bb5c526bd27d18b757abb/add_task.png)
+
+### Get Task
+![Get Task](https://github.com/jothika-08-joo/flask_mysql_crud_app/blob/c21fc529a456d4b6f24bb5c526bd27d18b757abb/get_tasks.png)
+
+### Update Task
+![Update Task](https://github.com/jothika-08-joo/flask_mysql_crud_app/blob/c21fc529a456d4b6f24bb5c526bd27d18b757abb/update_task.png)
+
 ## 🧑‍💻 Author
 
 **Jothika K**  
